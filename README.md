@@ -2,19 +2,28 @@
 
 Modern Personal Finance Dashboard built with React + Vite.
 
-## 🚀 Features
+---
+
+## 🚀 Live Demo
+
+https://fin-track-delta-five.vercel.app/
+
+---
+
+## ✨ Features
 
 - Add Transactions
 - Edit Transactions
 - Delete Transactions
-- Category Filtering
 - Search Transactions
+- Category Filtering
 - Dark / Light Theme
 - Expense Analytics
 - Pie Chart Visualization
 - Local Storage Persistence
 - Responsive Design
 - Smooth Animations
+- Modern Dashboard UI
 
 ---
 
@@ -32,11 +41,15 @@ Modern Personal Finance Dashboard built with React + Vite.
 
 ## 📸 Screenshots
 
-### Dark Theme
-(Add screenshot here)
+### 🌙 Dark Theme
 
-### Light Theme
-(Add screenshot here)
+![Dark Theme](./public/screenshots/dark-theme.png)
+
+---
+
+### ☀️ Light Theme
+
+![Light Theme](./public/screenshots/light-theme.png)
 
 ---
 
@@ -46,3 +59,4 @@ Clone the repository:
 
 ```bash
 git clone https://github.com/Siddhartha-HEX/FinTrack.git
+```
