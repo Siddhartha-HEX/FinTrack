@@ -1,3 +1,7 @@
+import { signOut } from "firebase/auth";
+
+import { auth } from "../firebase/firebase";
+
 function Navbar({
   searchTerm,
   setSearchTerm,
@@ -6,6 +10,20 @@ function Navbar({
   darkMode,
   setDarkMode,
 }) {
+  const handleLogout = () => {
+
+    signOut(auth)
+      .then(() => {
+
+        alert("Logged Out");
+
+      })
+      .catch((error) => {
+
+        alert(error.message);
+
+      });
+  };
 
   return (
     <div className="navbar">
@@ -47,6 +65,12 @@ function Navbar({
           }
         >
           {darkMode ? "☀️" : "🌙"}
+        </button>
+        <button
+          className="logout-btn"
+          onClick={handleLogout}
+        >
+          Logout
         </button>
 
         <div className="profile">
