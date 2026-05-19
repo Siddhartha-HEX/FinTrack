@@ -8,28 +8,48 @@ import { auth } from "./firebase/firebase";
 
 import Login from "./components/auth/Login";
 
+import Signup from "./components/auth/Signup";
+
 import MainContent from "./pages/MainContent";
 
 function App() {
 
   const [user, setUser] = useState(null);
 
+  const [isSignup, setIsSignup] =
+    useState(false);
+
   useEffect(() => {
 
     const unsubscribe =
-      onAuthStateChanged(auth, (currentUser) => {
+      onAuthStateChanged(
+        auth,
+        (currentUser) => {
 
-        setUser(currentUser);
+          setUser(currentUser);
 
-      });
+        }
+      );
 
     return () => unsubscribe();
 
   }, []);
 
+  if (user) {
+    return <MainContent />;
+  }
+
   return (
     <>
-      {user ? <MainContent /> : <Login />}
+      {isSignup ? (
+        <Signup
+          setIsSignup={setIsSignup}
+        />
+      ) : (
+        <Login
+          setIsSignup={setIsSignup}
+        />
+      )}
     </>
   );
 }

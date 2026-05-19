@@ -472,7 +472,7 @@ tbody tr:hover{
   display: flex;
   flex-direction: column;
 
-  gap: 20px;
+  gap: 24px;
 }
 
 .auth-form h2{
@@ -580,4 +580,26 @@ tbody tr:hover{
 
 .logout-btn:active{
   transform: scale(0.96);
+}
+.auth-switch{
+  text-align: center;
+  margin-top: -8px;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.auth-switch span{
+  color: #a78bfa;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  margin-left: 6px;
+
+  transition: 0.3s;
+}
+
+.auth-switch span:hover{
+  color: #c4b5fd;
 }

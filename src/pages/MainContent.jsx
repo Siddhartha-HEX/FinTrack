@@ -3,7 +3,9 @@ import ExpenseChart from "../components/ExpenseChart";
 import Transactions from "../components/Transactions";
 import AddTransaction from "../components/AddTransaction";
 import FinanceProgress from "../components/FinanceProgress";
+
 import { motion } from "framer-motion";
+
 import {
   Wallet,
   TrendingUp,
@@ -11,34 +13,20 @@ import {
   Receipt,
 } from "lucide-react";
 
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+
 import { useState, useEffect } from "react";
+import { db } from "../firebase/firebase";
+import { auth } from "../firebase/firebase";
 
 function MainContent() {
 
-  const [transactions, setTransactions] = useState(() => {
-
-    const savedTransactions =
-      localStorage.getItem("transactions");
-
-    return savedTransactions
-      ? JSON.parse(savedTransactions)
-      : [
-          {
-            id: 1,
-            title: "Groceries",
-            amount: -2000,
-            category: "Food",
-            date: "7 May 2026",
-          },
-          {
-            id: 2,
-            title: "Salary",
-            amount: 50000,
-            category: "Salary",
-            date: "5 May 2026",
-          },
-        ];
-  });
+  const [transactions, setTransactions] = useState([]);
 
   const [editData, setEditData] = useState(null);
 
@@ -49,11 +37,32 @@ function MainContent() {
   const [darkMode, setDarkMode] = useState(true);
 
   useEffect(() => {
-    localStorage.setItem(
-      "transactions",
-      JSON.stringify(transactions)
-    );
-  }, [transactions]);
+
+    const fetchTransactions = async () => {
+
+      const q = query(
+        collection(db, "transactions"),
+        where(
+          "userId",
+          "==",
+          auth.currentUser.uid
+        )
+      );
+
+      const querySnapshot =
+        await getDocs(q);
+
+      const firestoreData =
+        querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+        }));
+
+      setTransactions(firestoreData);
+    };
+
+    fetchTransactions();
+
+  }, []);
 
   const income = transactions
     .filter((item) => item.amount > 0)
@@ -69,14 +78,22 @@ function MainContent() {
     transactions.length;
 
   const highestExpense =
-    Math.min(
-      ...transactions.map((item) => item.amount)
-    );
+    transactions.length > 0
+      ? Math.min(
+          ...transactions.map(
+            (item) => item.amount
+          )
+        )
+      : 0;
 
   const highestIncome =
-    Math.max(
-      ...transactions.map((item) => item.amount)
-    );
+    transactions.length > 0
+      ? Math.max(
+          ...transactions.map(
+            (item) => item.amount
+          )
+        )
+      : 0;
 
   const filteredTransactions =
     transactions.filter((item) => {
@@ -91,7 +108,10 @@ function MainContent() {
           ? true
           : item.category === filterCategory;
 
-      return matchesSearch && matchesCategory;
+      return (
+        matchesSearch &&
+        matchesCategory
+      );
     });
 
   return (
@@ -112,7 +132,9 @@ function MainContent() {
         setDarkMode={setDarkMode}
       />
 
-      <h1 className="heading">Welcome Back 👋</h1>
+      <h1 className="heading">
+        Welcome Back 👋
+      </h1>
 
       <div className="cards">
 
@@ -126,6 +148,7 @@ function MainContent() {
             <Wallet size={20} />
             Total Balance
           </h3>
+
           <p>₹{balance}</p>
         </motion.div>
 
@@ -139,6 +162,7 @@ function MainContent() {
             <TrendingUp size={20} />
             Total Income
           </h3>
+
           <p>₹{income}</p>
         </motion.div>
 
@@ -152,6 +176,7 @@ function MainContent() {
             <TrendingDown size={20} />
             Total Expense
           </h3>
+
           <p>₹{expense}</p>
         </motion.div>
 
@@ -165,6 +190,7 @@ function MainContent() {
             <Receipt size={20} />
             Total Transactions
           </h3>
+
           <p>{totalTransactions}</p>
         </motion.div>
 
@@ -175,6 +201,7 @@ function MainContent() {
           transition={{ duration: 0.5 }}
         >
           <h3>Highest Income</h3>
+
           <p>₹{highestIncome}</p>
         </motion.div>
 
@@ -185,12 +212,15 @@ function MainContent() {
           transition={{ duration: 0.5 }}
         >
           <h3>Highest Expense</h3>
+
           <p>₹{highestExpense}</p>
         </motion.div>
 
       </div>
 
-      <ExpenseChart transactions={transactions} />
+      <ExpenseChart
+        transactions={transactions}
+      />
 
       <AddTransaction
         transactions={transactions}

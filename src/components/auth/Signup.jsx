@@ -3,7 +3,7 @@ import { createUserWithEmailAndPassword } from "firebase/auth";
 
 import { auth } from "../../firebase/firebase";
 
-function Signup() {
+function Signup({ setIsSignup }) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -61,6 +61,17 @@ function Signup() {
         <button type="submit">
           Sign Up
         </button>
+        <p className="auth-switch">
+
+        Already have an account?
+
+        <span
+            onClick={() => setIsSignup(false)}
+        >
+            Login
+        </span>
+
+        </p>
 
       </form>
 

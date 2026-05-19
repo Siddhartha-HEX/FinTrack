@@ -1,5 +1,12 @@
 import { useState,useEffect } from "react";
 import { toast } from "react-toastify";
+import {
+  collection,
+  addDoc,
+} from "firebase/firestore";
+import { db } from "../firebase/firebase";
+import { auth } from "../firebase/firebase";
+
 
 function AddTransaction({ transactions, setTransactions, editData, setEditData, }) {
 
@@ -16,7 +23,7 @@ function AddTransaction({ transactions, setTransactions, editData, setEditData, 
 
   }, [editData]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!title || !amount || !category) {
@@ -51,10 +58,19 @@ function AddTransaction({ transactions, setTransactions, editData, setEditData, 
         title,
         amount: Number(amount),
         category,
+        userId: auth.currentUser.uid,
         date: new Date().toLocaleDateString(),
       };
 
-      setTransactions([newTransaction, ...transactions]);
+      await addDoc(
+        collection(db, "transactions"),
+        newTransaction
+      );
+
+      setTransactions([
+        newTransaction,
+        ...transactions,
+      ]);
     }
     toast.success("Transaction Added");
 

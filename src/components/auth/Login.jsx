@@ -6,7 +6,7 @@ import {
 
 import { auth } from "../../firebase/firebase";
 
-function Login() {
+function Login({ setIsSignup }) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] =
@@ -66,6 +66,17 @@ function Login() {
         <button type="submit">
           Login
         </button>
+        <p className="auth-switch">
+
+            Don't have an account?
+
+            <span
+                onClick={() => setIsSignup(true)}
+            >
+                Sign Up
+            </span>
+
+        </p>
 
       </form>
 
