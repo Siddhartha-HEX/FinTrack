@@ -1,65 +1,128 @@
-function Transactions({ transactions, setTransactions , setEditData, }) {
+import {
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
 
-    const deleteTransaction = (id) => {
-    const updatedTransactions =
-        transactions.filter((item) => item.id !== id);
+import { db } from "../firebase/firebase";
 
-    setTransactions(updatedTransactions);
-    };
-    return (
-        <div className="transactions">
+function Transactions({
+  transactions,
+  setTransactions,
+  setEditData,
+}) {
 
-        <h2>Recent Transactions</h2>
+  const deleteTransaction =
+    async (firestoreId) => {
 
-        <table>
+      try {
 
-            <thead>
-            <tr>
-                <th>Title</th>
-                <th>Category</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Action</th>
+        await deleteDoc(
+          doc(
+            db,
+            "transactions",
+            firestoreId
+          )
+        );
+
+        const updatedTransactions =
+          transactions.filter(
+            (item) =>
+              item.firestoreId !==
+              firestoreId
+          );
+
+        setTransactions(
+          updatedTransactions
+        );
+
+      } catch (error) {
+
+        console.log(error);
+
+      }
+  };
+
+  return (
+    <div className="transactions">
+
+      <h2>
+        Recent Transactions
+      </h2>
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Date</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          {transactions.map((item) => (
+            <tr
+              key={
+                item.firestoreId ||
+                item.id
+              }
+            >
+
+              <td>{item.title}</td>
+
+              <td>{item.category}</td>
+
+              <td
+                style={{
+                  color:
+                    item.amount > 0
+                      ? "lime"
+                      : "red",
+
+                  fontWeight: "bold",
+                }}
+              >
+                ₹{item.amount}
+              </td>
+
+              <td>{item.date}</td>
+
+              <td>
+
+                <button
+                  className="edit-btn"
+                  onClick={() =>
+                    setEditData(item)
+                  }
+                >
+                  Edit
+                </button>
+
+                <button
+                  className="delete-btn"
+                  onClick={() =>
+                    deleteTransaction(
+                      item.firestoreId
+                    )
+                  }
+                >
+                  Delete
+                </button>
+
+              </td>
+
             </tr>
-            </thead>
+          ))}
 
-            <tbody>
+        </tbody>
 
-            {transactions.map((item) => (
-                <tr key={item.id}>
+      </table>
 
-                <td>{item.title}</td>
-                <td>{item.category}</td>
-                
-                <td
-                    style={{
-                        color: item.amount > 0 ? "lime" : "red",
-                        fontWeight: "bold",
-                    }}
-                    >
-                    ₹{item.amount}
-                    </td>
+    </div>
+  );
+}
 
-                <td>{item.date}</td>
-
-                    <td>
-                        <button className="edit-btn" onClick={() => setEditData(item)}>
-                            Edit
-                        </button>
-
-                        <button onClick={() => deleteTransaction(item.id)}>
-                            Delete
-                        </button>
-                    </td>
-                </tr>
-            ))}
-
-            </tbody>
-
-        </table>
-
-        </div>
-    );
-    }
-
-    export default Transactions;
+export default Transactions;

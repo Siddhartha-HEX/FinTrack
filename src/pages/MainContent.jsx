@@ -3,6 +3,7 @@ import ExpenseChart from "../components/ExpenseChart";
 import Transactions from "../components/Transactions";
 import AddTransaction from "../components/AddTransaction";
 import FinanceProgress from "../components/FinanceProgress";
+import Sidebar from "../components/Sidebar";
 
 import { motion } from "framer-motion";
 
@@ -54,6 +55,7 @@ function MainContent() {
 
       const firestoreData =
         querySnapshot.docs.map((doc) => ({
+          firestoreId: doc.id,
           ...doc.data(),
         }));
 
@@ -115,13 +117,17 @@ function MainContent() {
     });
 
   return (
-    <div
-      className={
-        darkMode
-          ? "main-content dark"
-          : "main-content light"
-      }
-    >
+    <div className="app">
+
+      <Sidebar />
+
+      <div
+        className={
+          darkMode
+            ? "main-content dark"
+            : "main-content light"
+        }
+      >
 
       <Navbar
         searchTerm={searchTerm}
@@ -239,6 +245,8 @@ function MainContent() {
         income={income}
         expense={expense}
       />
+
+        </div>
 
     </div>
   );

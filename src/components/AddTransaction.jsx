@@ -3,6 +3,8 @@ import { toast } from "react-toastify";
 import {
   collection,
   addDoc,
+  updateDoc,
+  doc,
 } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { auth } from "../firebase/firebase";
@@ -33,15 +35,31 @@ function AddTransaction({ transactions, setTransactions, editData, setEditData, 
 
     if (editData) {
 
+      const updatedTransaction = {
+        ...editData,
+        title,
+        amount: Number(amount),
+        category,
+      };
+
+      await updateDoc(
+        doc(
+          db,
+          "transactions",
+          editData.firestoreId
+        ),
+        {
+          title,
+          amount: Number(amount),
+          category,
+        }
+      );
+
       const updatedTransactions =
         transactions.map((item) =>
-          item.id === editData.id
-            ? {
-                ...item,
-                title,
-                amount: Number(amount),
-                category,
-              }
+          item.firestoreId ===
+          editData.firestoreId
+            ? updatedTransaction
             : item
         );
 
@@ -51,7 +69,8 @@ function AddTransaction({ transactions, setTransactions, editData, setEditData, 
 
       setEditData(null);
 
-    } else {
+    } 
+    else {
 
       const newTransaction = {
         id: Date.now(),
@@ -62,13 +81,16 @@ function AddTransaction({ transactions, setTransactions, editData, setEditData, 
         date: new Date().toLocaleDateString(),
       };
 
-      await addDoc(
+      const docRef = await addDoc(
         collection(db, "transactions"),
         newTransaction
-      );
+      );;
 
       setTransactions([
-        newTransaction,
+        {
+          firestoreId: docRef.id,
+          ...newTransaction,
+        },
         ...transactions,
       ]);
     }
